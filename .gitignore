@@ -1,0 +1,6 @@
+/.pytest_cache/
+/venv/
+/key_management.png
+/tools_menu.png
+__pycache__/
+.idea/
