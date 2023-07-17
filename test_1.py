@@ -2,6 +2,7 @@ import time
 import imaplib
 import email
 
+import pytest
 import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -64,6 +65,7 @@ def get_new_password():
                 return 'Письмо не пришло'
 
 # def test_auth_with_invalid_data(chrome_driver_will_close, fox_driver_will_close):
+
 def test_auth_with_invalid_data(fox_driver_will_close):
     """Авторизация с невалидными данными"""
     # browsers = [chrome_driver_will_close, fox_driver_will_close]
@@ -200,6 +202,62 @@ def test_auth_with_new_login(fox_driver_will_close):
     requests.post(url_change_password, data={"macron_web_pass": "testtest1"}).json()
     assert get_new_password() == 'testtest1'
     browser.close()
+
+
+def test_5(fox_driver_wont_close):
+    fox_driver_wont_close.get('https://strojregionfilomena.workhere.ru/')
+    fox_driver_wont_close.implicitly_wait(10)
+    user = fox_driver_wont_close.find_element(By.ID, "auth-form-login_user")
+    password = fox_driver_wont_close.find_element(By.ID, 'auth-form-login_password')
+    login_button = fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+    user.send_keys('admin')
+    password.send_keys('testtest1')
+    login_button.click()
+    dropdown = fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.user-dropdown__lNpwN')
+    assert dropdown.is_displayed()
+    # tools_menu = fox_driver_wont_close.find_element(By.XPATH, '//a[starts-with(@href,"/tools")]')
+    # tools_menu.click()
+    # fox_driver_wont_close.close()
+
+def test_tools(fox_driver_wont_close):
+    fox_driver_wont_close.get('https://strojregionfilomena.workhere.ru/')
+    fox_driver_wont_close.find_element(By.XPATH, '//a[starts-with(@href,"/tools")]').click()
+    assert fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.title__8XLeH').text == 'Инструменты'
+    time.sleep(2)
+    fox_driver_wont_close.find_element(By.XPATH, '//a[starts-with(@href, "/key-management")]').click()
+    assert fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.title__8XLeH').text == 'Управление ключами'
+    # table = fox_driver_wont_close.find_element(By.XPATH, '//tbody[@class="ant-table-tbody"]')
+    # count = table.get_attribute('childElementCount')
+    # count = table.get_attribute('outerHTML')
+    add_key = fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.plusBlock__AoWbv')
+    # add_key = fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.ant-notification-notice')
+    time.sleep(7)
+    # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//span[@class='taLnk ulBlueLinks']"))).click()
+    # fox_driver_wont_close.execute_script('arguments[0].click;', add_key)
+    add_key.click()
+    fox_driver_wont_close.find_element(By.TAG_NAME, 'input').send_keys('2')
+    fox_driver_wont_close.find_element(By.XPATH, '//button[@class="ant-btn ant-btn-primary"]').click()
+    time.sleep(5)
+    assert fox_driver_wont_close.find_element(By.XPATH, '//div[@class="dialog-header-default-title-name__yeBEd"]/div').text == 'Информация о ключе'
+    fox_driver_wont_close.find_element(By.XPATH, '//div[@class="keyManagement__dialog__footer__OQ45J"]/button').click()
+    raw = fox_driver_wont_close.find_element(By.XPATH, '//tbody[@class="ant-table-tbody"]/tr[2]')
+    # print(raw.get_attribute('outerHTML'))
+    key = raw.find_element(By.XPATH, '//span[@class="key-field__box__3fUIb"]').text
+    print(key)
+    raw.find_element(By.XPATH, '//button[@class="key-field__control__EDtFi"]').click()
+    time.sleep(10)
+    fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.plusBlock__AoWbv').click()
+    a = fox_driver_wont_close.find_element(By.TAG_NAME, 'input')
+    a.send_keys(Keys.CONTROL + "v")
+    time.sleep(5)
+    validate_key = a.get_attribute('value')
+    assert key == validate_key
+
+
+
+
+    # fox_driver_wont_close.close()
+
 
 
 
