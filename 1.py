@@ -8,6 +8,17 @@
 #
 #
 # print(isinstance(2, str))
-import datetime
+# import datetime
+# import time
+#
+# for i in range(4):
+#     print(i)
+# print(datetime.datetime.now())
+#
+# a = datetime.datetime.now()
+# print(f"{a.day}-{a.month}-{a.year} {a.hour}:{a.minute}:{a.second}")
+import requests
 
-print(datetime.date.today())
+data = {"user": "admin", "password": "testtest1"}
+response = requests.post('https://strojregionfilomena.workhere.ru/api/auth/login', data=data).json()
+print(response['data']['token'])

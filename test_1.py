@@ -9,6 +9,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+
+
 # from mail import get_key
 
 def get_key():
@@ -35,8 +37,9 @@ def get_key():
         else:
             time.sleep(1)
             trying += 1
-            if  trying > 20:
+            if trying > 20:
                 return 'Письмо не пришло'
+
 
 def get_new_password():
     """Получение нового пароля из почты"""
@@ -62,8 +65,10 @@ def get_new_password():
         else:
             time.sleep(1)
             trying += 1
-            if  trying > 20:
+            if trying > 20:
                 return 'Письмо не пришло'
+
+
 #
 # # def test_auth_with_invalid_data(chrome_driver_will_close, fox_driver_will_close):
 # def test_auth_with_invalid_data(fox_driver_will_close):
@@ -205,68 +210,45 @@ def get_new_password():
 #     browser.close()
 
 
-def test_auth_with_login(fox_driver_will_close):
+def test_auth_with_login(fox_driver_will_close, access_token):
     """Создание и редактирование клиента"""
 
     browser = fox_driver_will_close
     wait = WebDriverWait(browser, 10)
-    # browser.implicitly_wait(20)
-    browser.get('https://strojregionfilomena.workhere.ru/')
-    user = browser.find_element(By.ID, "auth-form-login_user")
+    browser.implicitly_wait(10)
+    browser.get('https://strojregionfilomena.workhere.ru/clients')
+    # user = browser.find_element(By.ID, "auth-form-login_user")
+    user = wait.until(EC.presence_of_element_located((By.ID, "auth-form-login_user")))
     password = browser.find_element(By.ID, 'auth-form-login_password')
     login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
     user.send_keys('admin')
     password.send_keys('testtest1')
     login_button.click()
     time.sleep(2)
-    message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
-    assert message.text == 'Вы успешно вошли'
-    browser.execute_script("window.open('');")
-    browser.switch_to.window(browser.window_handles[1])
     browser.get('https://strojregionfilomena.workhere.ru/clients')
+    # message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
+    # assert message.text == 'Вы успешно вошли'
+    # browser.execute_script("window.open('');")
+    # browser.switch_to.window(browser.window_handles[1])
+    # browser.get('https://strojregionfilomena.workhere.ru/clients')
     # browser.switch_to.window(browser.window_handles[0])
     create_button = browser.find_element(By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')
-    for i in range(5):
-        print("Начало итерации")
-        try:
-            wait.until(EC.element_to_be_clickable(create_button)).click()
-            print("клик на кнопку Создать")
-        except Exception:
-            print('Что то пошло не так')
-            break
-        input_client_name = browser.find_element(By.XPATH, '//input[@id="CreateLeadForm_ex_name"]')
-        input_client_name.send_keys(f'{datetime.date.today()} - 1')
-        print("Ввод имени Клиента")
-        button_save_client = browser.find_element(By.XPATH, '//button[@type="submit"]')
-        print("Перед нажатием на кнопку сохранить")
-        button_save_client.click()
-        print("После нажатия на кнопку сохранить")
-
-
-    # browser.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    create_button.click()
+    input_client_name = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="CreateLeadForm_ex_name"]')))
+    input_client_name.send_keys(f'{datetime.date.today()} - 0')
+    button_save_client = browser.find_element(By.XPATH, '//button[@type="submit"]')
+    button_save_client.click()
+    for i in range(4, 7):
+        print(access_token)
+        data_now = datetime.datetime.now()
+        name = f"{data_now.day}-{data_now.month}-{data_now.year} {data_now.hour}:{data_now.minute}:{data_now.second}"
+        url = f'https://api.macroncrm.ru/express-client/create?disable_black_list_check=1&access-token={access_token}'
+        data = {
+            "client_stts": i, "contr_stts": i, "ex_name": name, "deal_availability": 0,
+            "name_creator": "Admin", "respon_client_stts": "Admin", "uid_creator": 2
+        }
+        assert requests.post(url, data=data).status_code == 201
+    browser.close()
 
 # def test_invalid_password(chrome_driver_wont_close):
 #     chrome_driver_wont_close.implicitly_wait(5)

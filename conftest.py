@@ -1,4 +1,5 @@
 import pytest
+import requests
 from selenium import webdriver
 # from selenium.webdriver.chrome.service import
 from webdriver_manager.chrome import ChromeDriverManager
@@ -32,6 +33,13 @@ def fox_driver_will_close():
     # fos_driver_will_close = webdriver.Firefox(options=op)
     fox_driver_will_close = webdriver.Firefox()
     return fox_driver_will_close
+
+@pytest.fixture
+def access_token():
+    data = {"user": "admin", "password": "testtest1"}
+    response = requests.post('https://strojregionfilomena.workhere.ru/api/auth/login', data=data).json()
+    access_token = response['data']['token']
+    return access_token
 
 
 # print(get_key())
