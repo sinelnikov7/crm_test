@@ -244,15 +244,17 @@ def get_new_password():
 #     browser.close()
 
 
-def test_check_value_vidget_clients(fox_driver_will_close):
+def test_check_value_vidget_clients(browser_autorized_mozila):
     """Проверка значений статистики клиентов в виджете и на вкладке"""
-    browser = fox_driver_will_close
+    browser = browser_autorized_mozila
     wait = WebDriverWait(browser, 10)
     browser.implicitly_wait(10)
-    browser.get('https://strojregionfilomena.workhere.ru/clients')
+    browser.get('https://strojregionfilomena.workhere.ru/')
     browser.execute_script("window.open('');")
     browser.switch_to.window(browser.window_handles[1])
     browser.get('https://strojregionfilomena.workhere.ru/clients')
+    radio_group = browser.find_element(By.XPATH, '//div[@class="ant-radio-group-outline"]/label[1]')
+    radio_group.click()
 
 
 
