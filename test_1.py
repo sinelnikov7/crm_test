@@ -210,46 +210,59 @@ def get_new_password():
 #     browser.close()
 
 
-def test_auth_with_login(fox_driver_will_close, access_token):
-    """Создание и редактирование клиента"""
+# def test_auth_with_login(fox_driver_will_close, access_token):
+#     """Создание и редактирование клиента"""
+#     browser = fox_driver_will_close
+#     wait = WebDriverWait(browser, 10)
+#     browser.implicitly_wait(10)
+#     browser.get('https://strojregionfilomena.workhere.ru/clients')
+#     user = wait.until(EC.presence_of_element_located((By.ID, "auth-form-login_user")))
+#     password = browser.find_element(By.ID, 'auth-form-login_password')
+#     login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+#     user.send_keys('admin')
+#     password.send_keys('testtest1')
+#     login_button.click()
+#     time.sleep(2)
+#     browser.get('https://strojregionfilomena.workhere.ru/clients')
+#     create_button = browser.find_element(By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')
+#     create_button.click()
+#     input_client_name = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="CreateLeadForm_ex_name"]')))
+#     input_client_name.send_keys(f'{datetime.date.today()} - 0')
+#     button_save_client = browser.find_element(By.XPATH, '//button[@type="submit"]')
+#     button_save_client.click()
+#     statuses = ([6, 2], [4, 4], [3, 5])
+#     for status in statuses:
+#         print(access_token)
+#         data_now = datetime.datetime.now()
+#         name = f"{data_now.day}-{data_now.month}-{data_now.year} {data_now.hour}:{data_now.minute}:{data_now.second}"
+#         url = f'https://api.macroncrm.ru/express-client/create?disable_black_list_check=1&access-token={access_token}'
+#         data = {
+#             "client_stts": status[0], "contr_stts": status[1], "ex_name": name, "deal_availability": 0,
+#             "name_creator": "Admin", "respon_client_stts": "Admin", "uid_creator": 2
+#         }
+#         assert requests.post(url, data=data).status_code == 201
+#     browser.close()
 
+
+def test_check_value_vidget_clients(fox_driver_will_close):
+    """Проверка значений статистики клиентов в виджете и на вкладке"""
     browser = fox_driver_will_close
     wait = WebDriverWait(browser, 10)
     browser.implicitly_wait(10)
     browser.get('https://strojregionfilomena.workhere.ru/clients')
-    # user = browser.find_element(By.ID, "auth-form-login_user")
-    user = wait.until(EC.presence_of_element_located((By.ID, "auth-form-login_user")))
-    password = browser.find_element(By.ID, 'auth-form-login_password')
-    login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
-    user.send_keys('admin')
-    password.send_keys('testtest1')
-    login_button.click()
-    time.sleep(2)
+    browser.execute_script("window.open('');")
+    browser.switch_to.window(browser.window_handles[1])
     browser.get('https://strojregionfilomena.workhere.ru/clients')
-    # message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
-    # assert message.text == 'Вы успешно вошли'
-    # browser.execute_script("window.open('');")
-    # browser.switch_to.window(browser.window_handles[1])
-    # browser.get('https://strojregionfilomena.workhere.ru/clients')
-    # browser.switch_to.window(browser.window_handles[0])
-    create_button = browser.find_element(By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')
-    create_button.click()
-    input_client_name = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="CreateLeadForm_ex_name"]')))
-    input_client_name.send_keys(f'{datetime.date.today()} - 0')
-    button_save_client = browser.find_element(By.XPATH, '//button[@type="submit"]')
-    button_save_client.click()
-    statuses = ([6, 2], [4, 4], [3, 5])
-    for status in statuses:
-        print(access_token)
-        data_now = datetime.datetime.now()
-        name = f"{data_now.day}-{data_now.month}-{data_now.year} {data_now.hour}:{data_now.minute}:{data_now.second}"
-        url = f'https://api.macroncrm.ru/express-client/create?disable_black_list_check=1&access-token={access_token}'
-        data = {
-            "client_stts": status[0], "contr_stts": status[1], "ex_name": name, "deal_availability": 0,
-            "name_creator": "Admin", "respon_client_stts": "Admin", "uid_creator": 2
-        }
-        assert requests.post(url, data=data).status_code == 201
-    browser.close()
+
+
+
+
+
+
+
+
+
+
 
 # def test_invalid_password(chrome_driver_wont_close):
 #     chrome_driver_wont_close.implicitly_wait(5)
