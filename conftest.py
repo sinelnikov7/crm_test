@@ -18,9 +18,9 @@ def chrome_driver_wont_close():
 
 @pytest.fixture
 def chrome_driver_will_close():
-    op = webdriver.ChromeOptions()
-    op.add_argument('headless')
-    chrome_driver_will_close = webdriver.Chrome(service=ChromeService(executable_path='C:/chromedriver/chromedriver'), options=op)
+    # op = webdriver.ChromeOptions()
+    # op.add_argument('headless')
+    chrome_driver_will_close = webdriver.Chrome(service=ChromeService(executable_path='C:/chromedriver/chromedriver'))#, options=op)
 
     return chrome_driver_will_close
 

@@ -33,7 +33,7 @@ def get_key():
         else:
             time.sleep(1)
             trying += 1
-            if  trying > 10:
+            if  trying > 20:
                 return 'Письмо не пришло'
 
 def get_new_password():
@@ -60,7 +60,7 @@ def get_new_password():
         else:
             time.sleep(1)
             trying += 1
-            if  trying > 10:
+            if  trying > 20:
                 return 'Письмо не пришло'
 
 # def test_auth_with_invalid_data(chrome_driver_will_close, fox_driver_will_close):
@@ -186,6 +186,7 @@ def test_auth_with_new_login(fox_driver_will_close):
     login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
     user.send_keys('admin')
     password_get = get_new_password()
+    # password_get = 'testtest1'
     password.send_keys(password_get)
     login_button.click()
     time.sleep(2)
