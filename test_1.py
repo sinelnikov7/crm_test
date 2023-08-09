@@ -1,3 +1,4 @@
+import datetime
 import time
 import imaplib
 import email
@@ -5,6 +6,7 @@ import email
 import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 # from mail import get_key
@@ -62,146 +64,186 @@ def get_new_password():
             trying += 1
             if  trying > 20:
                 return 'Письмо не пришло'
+#
+# # def test_auth_with_invalid_data(chrome_driver_will_close, fox_driver_will_close):
+# def test_auth_with_invalid_data(fox_driver_will_close):
+#     """Авторизация с невалидными данными"""
+#     # browsers = [chrome_driver_will_close, fox_driver_will_close]
+#     browsers = [fox_driver_will_close]
+#     data = [
+#         {'login': 'admins', 'password': 'testtest1'},
+#         {'login': 'admin', 'password': 'testtest'},
+#         {'login': 'admins', 'password': 'testtest'}
+#     ]
+#     for browser in browsers:
+#         browser.implicitly_wait(5)
+#         browser.get('https://strojregionfilomena.workhere.ru/')
+#         user = browser.find_element(By.ID, "auth-form-login_user")
+#         password = browser.find_element(By.ID, 'auth-form-login_password')
+#         login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+#         for value in data:
+#             user.send_keys(value.get('login'))
+#             password.send_keys(value.get('password'))
+#             try:
+#                 WebDriverWait(browser, 5).until(EC.element_to_be_clickable(login_button))
+#                 login_button.click()
+#             except:
+#                 print('something wrong "login_button.click()"')
+#             message = browser.find_element(By.CSS_SELECTOR, '.auth-forms-content-fields-message__hIBT7')
+#             assert message.text == 'Неверное имя пользователя или пароль.'
+#             user.send_keys(Keys.CONTROL + "a")
+#             user.send_keys(Keys.DELETE)
+#             password.send_keys(Keys.CONTROL + "a")
+#             password.send_keys(Keys.DELETE)
+#     # chrome_driver_will_close.close()
+#     fox_driver_will_close.close()
+#
+# def test_auth_with_login(fox_driver_will_close):
+#     """Авторизация по логину"""
+#     browsers = [fox_driver_will_close]
+#     for browser in browsers:
+#         browser.implicitly_wait(5)
+#         browser.get('https://strojregionfilomena.workhere.ru/')
+#         user = browser.find_element(By.ID, "auth-form-login_user")
+#         password = browser.find_element(By.ID, 'auth-form-login_password')
+#         login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+#         user.send_keys('admin')
+#         password.send_keys('testtest1')
+#         login_button.click()
+#         time.sleep(2)
+#         message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
+#         assert message.text == 'Вы успешно вошли'
+#         browser.close()
+#
+# def test_auth_with_phone(fox_driver_will_close):
+#     """Авторизация по номеру телефона"""
+#     browsers = [fox_driver_will_close]
+#     for browser in browsers:
+#         browser.implicitly_wait(5)
+#         browser.get('https://strojregionfilomena.workhere.ru/')
+#         user = browser.find_element(By.ID, "auth-form-login_user")
+#         password = browser.find_element(By.ID, 'auth-form-login_password')
+#         login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+#         user.send_keys('74956468444')
+#         password.send_keys('testtest1')
+#         login_button.click()
+#         time.sleep(2)
+#         message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
+#         assert message.text == 'Вы успешно вошли'
+#         browser.close()
+#
+# def test_auth_with_email(fox_driver_will_close):
+#     """Авторизация по email"""
+#     browsers = [fox_driver_will_close]
+#     for browser in browsers:
+#         browser.implicitly_wait(5)
+#         browser.get('https://strojregionfilomena.workhere.ru/')
+#         user = browser.find_element(By.ID, "auth-form-login_user")
+#         password = browser.find_element(By.ID, 'auth-form-login_password')
+#         login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+#         user.send_keys('vouka8@yandex.by')
+#         password.send_keys('testtest1')
+#         login_button.click()
+#         time.sleep(2)
+#         message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
+#         assert message.text == 'Вы успешно вошли'
+#         browser.close()
+#
+#
+# def test_recover_password_with_login(fox_driver_will_close):
+#     """Восстановление пароля по логину"""
+#     browser = fox_driver_will_close
+#     browser.implicitly_wait(20)
+#     browser.get('https://strojregionfilomena.workhere.ru/')
+#     link = browser.find_element(By.XPATH, '//*[@id="root"]/div/div/section/section/section/main/div/div/form/div[1]/span')
+#     link.click()
+#     input_login = browser.find_element(By.XPATH, '//*[@id="auth-form-restore-password_login"]')
+#     input_login.send_keys('admin')
+#     button = browser.find_element(By.XPATH, '//*[@id="root"]/div/div/section/section/section/main/div/div/form/div[1]/div[2]/div/div/span/button')
+#     button.click()
+#     input_key = browser.find_element(By.XPATH, '//*[@id="auth-form-restore-password_code"]')
+#     key = get_key()
+#     input_key.send_keys(key)
+#     button = browser.find_element(By.XPATH, '/html/body/div/div/div/section/section/section/main/div/div/form/div[1]/div[2]/div/div/span/button')
+#     button.click()
+#     time.sleep(5)
+#     try:
+#         is_valid = WebDriverWait(browser, 20).until(
+#                     EC.presence_of_element_located((By.XPATH, '/html/body/div[3]/div/div[2]/div/div[2]/div[1]/div/div/div/div')))
+#     except Exception:
+#         browser.close()
+#     assert is_valid.is_displayed()
+#     button_aprove = browser.find_element(By.XPATH, '/html/body/div[3]/div/div[2]/div/div[2]/div[2]/form/div[2]/button[1]')
+#     button_aprove.click()
+#     browser.close()
+#
+#
+# def test_auth_with_new_login(fox_driver_will_close):
+#     """Авторизация с новым паролем, и установка стандартного пароля"""
+#     browser = fox_driver_will_close
+#     browser.implicitly_wait(5)
+#     browser.get('https://strojregionfilomena.workhere.ru/')
+#     user = browser.find_element(By.ID, "auth-form-login_user")
+#     password = browser.find_element(By.ID, 'auth-form-login_password')
+#     login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+#     user.send_keys('admin')
+#     password_get = get_new_password()
+#     # password_get = 'testtest1'
+#     password.send_keys(password_get)
+#     login_button.click()
+#     time.sleep(2)
+#     message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
+#     assert message.text == 'Вы успешно вошли'
+#     url = 'https://strojregionfilomena.workhere.ru/api/auth/login?_suppress_response_codes=1&expand=partner.partnerHhConfig'
+#     data = {"user":"admin", "password": password_get}
+#     # data = {"user":"admin", "password": 'testtest1'}
+#     response = requests.post(url, data=data).json()
+#     access = response['data']['token']
+#     url_change_password = f'https://api.macroncrm.ru/user/update?id=2&expand=imageLink%2CimageThumbnailLink%2CassignedRights%2Crequisite%2CsignatureObject%2CpassportObjects%2CisWorkObserver%2CimageCropThumbnailLink%2CisGeneralObserver&access-token={access}'
+#     requests.post(url_change_password, data={"macron_web_pass": "testtest1"}).json()
+#     assert get_new_password() == 'testtest1'
+#     browser.close()
 
-# def test_auth_with_invalid_data(chrome_driver_will_close, fox_driver_will_close):
-def test_auth_with_invalid_data(fox_driver_will_close):
-    """Авторизация с невалидными данными"""
-    # browsers = [chrome_driver_will_close, fox_driver_will_close]
-    browsers = [fox_driver_will_close]
-    data = [
-        {'login': 'admins', 'password': 'testtest1'},
-        {'login': 'admin', 'password': 'testtest'},
-        {'login': 'admins', 'password': 'testtest'}
-    ]
-    for browser in browsers:
-        browser.implicitly_wait(5)
-        browser.get('https://strojregionfilomena.workhere.ru/')
-        user = browser.find_element(By.ID, "auth-form-login_user")
-        password = browser.find_element(By.ID, 'auth-form-login_password')
-        login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
-        for value in data:
-            user.send_keys(value.get('login'))
-            password.send_keys(value.get('password'))
-            try:
-                WebDriverWait(browser, 5).until(EC.element_to_be_clickable(login_button))
-                login_button.click()
-            except:
-                print('something wrong "login_button.click()"')
-            message = browser.find_element(By.CSS_SELECTOR, '.auth-forms-content-fields-message__hIBT7')
-            assert message.text == 'Неверное имя пользователя или пароль.'
-            user.send_keys(Keys.CONTROL + "a")
-            user.send_keys(Keys.DELETE)
-            password.send_keys(Keys.CONTROL + "a")
-            password.send_keys(Keys.DELETE)
-    # chrome_driver_will_close.close()
-    fox_driver_will_close.close()
 
 def test_auth_with_login(fox_driver_will_close):
-    """Авторизация по логину"""
-    browsers = [fox_driver_will_close]
-    for browser in browsers:
-        browser.implicitly_wait(5)
-        browser.get('https://strojregionfilomena.workhere.ru/')
-        user = browser.find_element(By.ID, "auth-form-login_user")
-        password = browser.find_element(By.ID, 'auth-form-login_password')
-        login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
-        user.send_keys('admin')
-        password.send_keys('testtest1')
-        login_button.click()
-        time.sleep(2)
-        message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
-        assert message.text == 'Вы успешно вошли'
-        browser.close()
+    """Создание и редактирование клиента"""
 
-def test_auth_with_phone(fox_driver_will_close):
-    """Авторизация по номеру телефона"""
-    browsers = [fox_driver_will_close]
-    for browser in browsers:
-        browser.implicitly_wait(5)
-        browser.get('https://strojregionfilomena.workhere.ru/')
-        user = browser.find_element(By.ID, "auth-form-login_user")
-        password = browser.find_element(By.ID, 'auth-form-login_password')
-        login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
-        user.send_keys('74956468444')
-        password.send_keys('testtest1')
-        login_button.click()
-        time.sleep(2)
-        message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
-        assert message.text == 'Вы успешно вошли'
-        browser.close()
-
-def test_auth_with_email(fox_driver_will_close):
-    """Авторизация по email"""
-    browsers = [fox_driver_will_close]
-    for browser in browsers:
-        browser.implicitly_wait(5)
-        browser.get('https://strojregionfilomena.workhere.ru/')
-        user = browser.find_element(By.ID, "auth-form-login_user")
-        password = browser.find_element(By.ID, 'auth-form-login_password')
-        login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
-        user.send_keys('vouka8@yandex.by')
-        password.send_keys('testtest1')
-        login_button.click()
-        time.sleep(2)
-        message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
-        assert message.text == 'Вы успешно вошли'
-        browser.close()
-
-
-def test_recover_password_with_login(fox_driver_will_close):
-    """Восстановление пароля по логину"""
     browser = fox_driver_will_close
-    browser.implicitly_wait(20)
-    browser.get('https://strojregionfilomena.workhere.ru/')
-    link = browser.find_element(By.XPATH, '//*[@id="root"]/div/div/section/section/section/main/div/div/form/div[1]/span')
-    link.click()
-    input_login = browser.find_element(By.XPATH, '//*[@id="auth-form-restore-password_login"]')
-    input_login.send_keys('admin')
-    button = browser.find_element(By.XPATH, '//*[@id="root"]/div/div/section/section/section/main/div/div/form/div[1]/div[2]/div/div/span/button')
-    button.click()
-    input_key = browser.find_element(By.XPATH, '//*[@id="auth-form-restore-password_code"]')
-    key = get_key()
-    input_key.send_keys(key)
-    button = browser.find_element(By.XPATH, '/html/body/div/div/div/section/section/section/main/div/div/form/div[1]/div[2]/div/div/span/button')
-    button.click()
-    time.sleep(5)
-    try:
-        is_valid = WebDriverWait(browser, 20).until(
-                    EC.presence_of_element_located((By.XPATH, '/html/body/div[3]/div/div[2]/div/div[2]/div[1]/div/div/div/div')))
-    except Exception:
-        browser.close()
-    assert is_valid.is_displayed()
-    button_aprove = browser.find_element(By.XPATH, '/html/body/div[3]/div/div[2]/div/div[2]/div[2]/form/div[2]/button[1]')
-    button_aprove.click()
-    browser.close()
-
-
-def test_auth_with_new_login(fox_driver_will_close):
-    """Авторизация с новым паролем, и установка стандартного пароля"""
-    browser = fox_driver_will_close
-    browser.implicitly_wait(5)
+    wait = WebDriverWait(browser, 10)
+    # browser.implicitly_wait(20)
     browser.get('https://strojregionfilomena.workhere.ru/')
     user = browser.find_element(By.ID, "auth-form-login_user")
     password = browser.find_element(By.ID, 'auth-form-login_password')
     login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
     user.send_keys('admin')
-    password_get = get_new_password()
-    # password_get = 'testtest1'
-    password.send_keys(password_get)
+    password.send_keys('testtest1')
     login_button.click()
     time.sleep(2)
     message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
     assert message.text == 'Вы успешно вошли'
-    url = 'https://strojregionfilomena.workhere.ru/api/auth/login?_suppress_response_codes=1&expand=partner.partnerHhConfig'
-    data = {"user":"admin", "password": password_get}
-    # data = {"user":"admin", "password": 'testtest1'}
-    response = requests.post(url, data=data).json()
-    access = response['data']['token']
-    url_change_password = f'https://api.macroncrm.ru/user/update?id=2&expand=imageLink%2CimageThumbnailLink%2CassignedRights%2Crequisite%2CsignatureObject%2CpassportObjects%2CisWorkObserver%2CimageCropThumbnailLink%2CisGeneralObserver&access-token={access}'
-    requests.post(url_change_password, data={"macron_web_pass": "testtest1"}).json()
-    assert get_new_password() == 'testtest1'
-    browser.close()
+    browser.execute_script("window.open('');")
+    browser.switch_to.window(browser.window_handles[1])
+    browser.get('https://strojregionfilomena.workhere.ru/clients')
+    # browser.switch_to.window(browser.window_handles[0])
+    create_button = browser.find_element(By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')
+    for i in range(5):
+        print("Начало итерации")
+        try:
+            wait.until(EC.element_to_be_clickable(create_button)).click()
+            print("клик на кнопку Создать")
+        except Exception:
+            print('Что то пошло не так')
+            break
+        input_client_name = browser.find_element(By.XPATH, '//input[@id="CreateLeadForm_ex_name"]')
+        input_client_name.send_keys(f'{datetime.date.today()} - 1')
+        print("Ввод имени Клиента")
+        button_save_client = browser.find_element(By.XPATH, '//button[@type="submit"]')
+        print("Перед нажатием на кнопку сохранить")
+        button_save_client.click()
+        print("После нажатия на кнопку сохранить")
 
+
+    # browser.close()
 
 
 
