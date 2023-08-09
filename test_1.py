@@ -238,13 +238,14 @@ def test_auth_with_login(fox_driver_will_close, access_token):
     input_client_name.send_keys(f'{datetime.date.today()} - 0')
     button_save_client = browser.find_element(By.XPATH, '//button[@type="submit"]')
     button_save_client.click()
-    for i in range(4, 7):
+    statuses = ([6, 2], [4, 4], [3, 5])
+    for status in statuses:
         print(access_token)
         data_now = datetime.datetime.now()
         name = f"{data_now.day}-{data_now.month}-{data_now.year} {data_now.hour}:{data_now.minute}:{data_now.second}"
         url = f'https://api.macroncrm.ru/express-client/create?disable_black_list_check=1&access-token={access_token}'
         data = {
-            "client_stts": i, "contr_stts": i, "ex_name": name, "deal_availability": 0,
+            "client_stts": status[0], "contr_stts": status[1], "ex_name": name, "deal_availability": 0,
             "name_creator": "Admin", "respon_client_stts": "Admin", "uid_creator": 2
         }
         assert requests.post(url, data=data).status_code == 201
