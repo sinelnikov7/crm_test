@@ -201,25 +201,103 @@ def test_auth_with_new_login(fox_driver_will_close):
     assert get_new_password() == 'testtest1'
     browser.close()
 
+def test_5(fox_driver_wont_close):
+    fox_driver_wont_close.get('https://strojregionfilomena.workhere.ru/')
+    fox_driver_wont_close.implicitly_wait(10)
+    user = fox_driver_wont_close.find_element(By.ID, "auth-form-login_user")
+    password = fox_driver_wont_close.find_element(By.ID, 'auth-form-login_password')
+    login_button = fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+    user.send_keys('admin')
+    password.send_keys('testtest1')
+    login_button.click()
+    dropdown = fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.user-dropdown__lNpwN')
+    assert dropdown.is_displayed()
+    # tools_menu = fox_driver_wont_close.find_element(By.XPATH, '//a[starts-with(@href,"/tools")]')
+    # tools_menu.click()
+    # fox_driver_wont_close.close()
+
+def test_tools(fox_driver_wont_close):
+    fox_driver_wont_close.get('https://strojregionfilomena.workhere.ru/')
+    fox_driver_wont_close.find_element(By.XPATH, '//a[starts-with(@href,"/tools")]').click()
+    assert fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.title__8XLeH').text == 'Инструменты'
+    time.sleep(2)
+    fox_driver_wont_close.find_element(By.XPATH, '//a[starts-with(@href, "/key-management")]').click()
+    assert fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.title__8XLeH').text == 'Управление ключами'
+    # table = fox_driver_wont_close.find_element(By.XPATH, '//tbody[@class="ant-table-tbody"]')
+    # count = table.get_attribute('childElementCount')
+    # count = table.get_attribute('outerHTML')
+    add_key = fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.plusBlock__AoWbv')
+    # add_key = fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.ant-notification-notice')
+    time.sleep(7)
+    # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//span[@class='taLnk ulBlueLinks']"))).click()
+    # fox_driver_wont_close.execute_script('arguments[0].click;', add_key)
+    add_key.click()
+    fox_driver_wont_close.find_element(By.TAG_NAME, 'input').send_keys('2')
+    fox_driver_wont_close.find_element(By.XPATH, '//button[@class="ant-btn ant-btn-primary"]').click()
+    time.sleep(5)
+    assert fox_driver_wont_close.find_element(By.XPATH,
+                                              '//div[@class="dialog-header-default-title-name__yeBEd"]/div').text == 'Информация о ключе'
+    fox_driver_wont_close.find_element(By.XPATH,
+                                       '//div[@class="keyManagement__dialog__footer__OQ45J"]/button').click()
+    raw = fox_driver_wont_close.find_element(By.XPATH, '//tbody[@class="ant-table-tbody"]/tr[2]')
+    # print(raw.get_attribute('outerHTML'))
+    key = raw.find_element(By.XPATH, '//span[@class="key-field__box__3fUIb"]').text
+    print(key)
+    raw.find_element(By.XPATH, '//button[@class="key-field__control__EDtFi"]').click()
+    time.sleep(10)
+    fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.plusBlock__AoWbv').click()
+    a = fox_driver_wont_close.find_element(By.TAG_NAME, 'input')
+    a.send_keys(Keys.CONTROL + "v")
+    time.sleep(5)
+    validate_key = a.get_attribute('value')
+    assert key == validate_key
 
 
+def test_create_clients(fox_driver_will_close, access_token):
+    """Создание и редактирование клиента"""
+    browser = fox_driver_will_close
+    wait = WebDriverWait(browser, 10)
+    browser.implicitly_wait(10)
+    browser.get('https://strojregionfilomena.workhere.ru/clients')
+    user = wait.until(EC.presence_of_element_located((By.ID, "auth-form-login_user")))
+    password = browser.find_element(By.ID, 'auth-form-login_password')
+    login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+    user.send_keys('admin')
+    password.send_keys('testtest1')
+    login_button.click()
+    time.sleep(2)
+    browser.get('https://strojregionfilomena.workhere.ru/clients')
+    create_button = browser.find_element(By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')
+    create_button.click()
+    input_client_name = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="CreateLeadForm_ex_name"]')))
+    input_client_name.send_keys(f'{datetime.date.today()} - 0')
+    button_save_client = browser.find_element(By.XPATH, '//button[@type="submit"]')
+    button_save_client.click()
+    statuses = ([6, 2], [4, 4], [3, 5])
+    for status in statuses:
+        print(access_token)
+        data_now = datetime.datetime.now()
+        name = f"{data_now.day}-{data_now.month}-{data_now.year} {data_now.hour}:{data_now.minute}:{data_now.second}"
+        url = f'https://api.macroncrm.ru/express-client/create?disable_black_list_check=1&access-token={access_token}'
+        data = {
+            "client_stts": status[0], "contr_stts": status[1], "ex_name": name, "deal_availability": 0,
+            "name_creator": "Admin", "respon_client_stts": "Admin", "uid_creator": 2
+        }
+        assert requests.post(url, data=data).status_code == 201
+    browser.close()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def test_check_value_vidget_clients(browser_autorized_mozila):
+    """Проверка значений статистики клиентов в виджете и на вкладке"""
+    browser = browser_autorized_mozila
+    wait = WebDriverWait(browser, 10)
+    browser.implicitly_wait(10)
+    browser.get('https://strojregionfilomena.workhere.ru/')
+    browser.execute_script("window.open('');")
+    browser.switch_to.window(browser.window_handles[1])
+    browser.get('https://strojregionfilomena.workhere.ru/clients')
+    radio_group = browser.find_element(By.XPATH, '//div[@class="ant-radio-group-outline"]/label[1]')
+    radio_group.click()
 
 
 
