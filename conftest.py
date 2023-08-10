@@ -17,12 +17,17 @@ def chrome_driver_wont_close():
     chrome_driver_wont_close = webdriver.Chrome(service=ChromeService(executable_path='C:/chromedriver/chromedriver'))
     return chrome_driver_wont_close
 
+@pytest.fixture(scope='session')
+def fox_driver_wont_close():
+    fox_driver_wont_close = webdriver.Chrome(service=ChromeService(executable_path='C:/chromedriver/chromedriver'))
+    return fox_driver_wont_close
+
 
 @pytest.fixture
 def chrome_driver_will_close():
     # op = webdriver.ChromeOptions()
     # op.add_argument('headless')
-    chrome_driver_will_close = webdriver.Chrome(service=ChromeService(executable_path='C:/chromedriver/chromedriver'))#, options=op)
+    chrome_driver_will_close = webdriver.Firefox()
 
     return chrome_driver_will_close
 
