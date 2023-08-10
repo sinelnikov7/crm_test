@@ -4,6 +4,8 @@ import email
 
 import requests
 import datetime
+
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -278,7 +280,7 @@ def get_new_password():
 #         assert requests.post(url, data=data).status_code == 201
     # browser.close()
 
-
+#NoSuchElementException
 def test_check_value_vidget_clients(browser_autorized_mozila):
     """Проверка значений статистики клиентов в виджете и на вкладке"""
     browser = browser_autorized_mozila
@@ -290,6 +292,25 @@ def test_check_value_vidget_clients(browser_autorized_mozila):
     browser.get('https://strojregionfilomena.workhere.ru/clients')
     radio_group = browser.find_element(By.XPATH, '//div[@class="ant-radio-group ant-radio-group-outline"]/label[1]')
     radio_group.click()
+    time.sleep(5)
+    client_status = browser.find_element(By.XPATH, '//div[@id="rc-tabs-0-tab-1"]')
+    client_status.click()
+    assert browser.find_element(By.XPATH, '//div[@class="quick-stats__block__2eDvm"]').is_displayed() == True
+    index = 1
+    status_list = '//div[@class="quick-stats__block__2eDvm"]'
+    dict_from_vkladka = {'name': [], 'value': [], 'procent': []}
+    while True:
+        try:
+            dict_from_vkladka['name'].append(browser.find_element(By.XPATH, f'{status_list}/div[{index}]/div/div').text)
+            dict_from_vkladka['value'].append(browser.find_element(By.XPATH, f'{status_list}/div[{index}]/span/div').text)
+            dict_from_vkladka['procent'].append(browser.find_element(By.XPATH, f'{status_list}/div[{index}]/div[2]/div/span').text)
+            index += 1
+        except NoSuchElementException:
+            print(dict_from_vkladka)
+            break
+
+
+
 
 
 
