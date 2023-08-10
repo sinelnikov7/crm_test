@@ -66,3 +66,4 @@ def get_new_password():
                 return 'Письмо не пришло'
 
 print(get_new_password())
+print(get_key())

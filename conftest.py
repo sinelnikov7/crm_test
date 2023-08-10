@@ -33,13 +33,5 @@ def fox_driver_will_close():
     fox_driver_will_close = webdriver.Firefox()
     return fox_driver_will_close
 
-@pytest.fixture(scope='session')
-def fox_driver_wont_close():
-    # op = webdriver.FirefoxOptions()
-    # op.add_argument('--headless')
-    # fos_driver_will_close = webdriver.Firefox(options=op)
-    fox_driver_wont_close = webdriver.Firefox()
-    return fox_driver_wont_close
-
 
 # print(get_key())
