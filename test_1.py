@@ -3,6 +3,7 @@ import imaplib
 import email
 
 import requests
+import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -253,9 +254,9 @@ def test_tools(fox_driver_wont_close):
     assert key == validate_key
 
 
-def test_create_clients(fox_driver_will_close, access_token):
+def test_create_clients(fox_driver_wont_close, access_token):
     """Создание и редактирование клиента"""
-    browser = fox_driver_will_close
+    browser = fox_driver_wont_close
     wait = WebDriverWait(browser, 10)
     browser.implicitly_wait(10)
     browser.get('https://strojregionfilomena.workhere.ru/clients')
@@ -287,16 +288,16 @@ def test_create_clients(fox_driver_will_close, access_token):
     browser.close()
 
 
-def test_check_value_vidget_clients(browser_autorized_mozila):
+def test_check_value_vidget_clients(fox_driver_wont_close):
     """Проверка значений статистики клиентов в виджете и на вкладке"""
-    browser = browser_autorized_mozila
+    browser = fox_driver_wont_close
     wait = WebDriverWait(browser, 10)
     browser.implicitly_wait(10)
     browser.get('https://strojregionfilomena.workhere.ru/')
     browser.execute_script("window.open('');")
     browser.switch_to.window(browser.window_handles[1])
     browser.get('https://strojregionfilomena.workhere.ru/clients')
-    radio_group = browser.find_element(By.XPATH, '//div[@class="ant-radio-group-outline"]/label[1]')
+    radio_group = browser.find_element(By.XPATH, '//div[@class="ant-radio-group ant-radio-group-outline"]/label[1]')
     radio_group.click()
 
 
