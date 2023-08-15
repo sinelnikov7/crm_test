@@ -246,30 +246,37 @@ def get_new_password():
 #         button_aprove.click()
 #     browser.close()
 #
-#
+@allure.feature('Восстановление пароля')
+@allure.story('Авторизация с новым паролем, и установка стандартного пароля')
+@allure.severity('Critical')
 def test_auth_with_new_login(fox_driver_will_close):
     """Авторизация с новым паролем, и установка стандартного пароля"""
     browser = fox_driver_will_close
     browser.implicitly_wait(5)
     browser.get('https://strojregionfilomena.workhere.ru/')
-    user = browser.find_element(By.ID, "auth-form-login_user")
-    password = browser.find_element(By.ID, 'auth-form-login_password')
-    login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
-    user.send_keys('admin')
-    password_get = get_new_password()
-    password.send_keys(password_get)
-    login_button.click()
+    with allure.step('Наличие поля "Логин" и его заполнение'):
+        browser.find_element(By.ID, "auth-form-login_user").send_keys('admin')
+    with allure.step('Получение пароля из почты и его ввод в инпут'):
+        password_get = get_new_password()
+        browser.find_element(By.ID, 'auth-form-login_password').send_keys(password_get)
+    with allure.step('Наличие и нажатие кнопки войти'):
+        browser.find_element(By.CSS_SELECTOR, '.ant-btn-block').click()
     time.sleep(2)
-    message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
-    assert message.text == 'Вы успешно вошли'
+    with allure.step('Подтверждение Авторизации со сгенерированным паролем'):
+        try:
+            message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div').text
+        except NoSuchElementException:
+            message = "Авторизация не прошла"
+        assert message == 'Вы успешно вошли'
     url = 'https://strojregionfilomena.workhere.ru/api/auth/login?_suppress_response_codes=1&expand=partner.partnerHhConfig'
     data = {"user":"admin", "password": password_get}
     # data = {"user":"admin", "password": 'testtest1'}
     response = requests.post(url, data=data).json()
     access = response['data']['token']
     url_change_password = f'https://api.macroncrm.ru/user/update?id=2&expand=imageLink%2CimageThumbnailLink%2CassignedRights%2Crequisite%2CsignatureObject%2CpassportObjects%2CisWorkObserver%2CimageCropThumbnailLink%2CisGeneralObserver&access-token={access}'
-    requests.post(url_change_password, data={"macron_web_pass": "testtest1"}).json()
-    assert get_new_password() == 'testtest1'
+    with allure.step('Установка нового пароля и его отправка на почту'):
+        requests.post(url_change_password, data={"macron_web_pass": "testtest1"}).json()
+        assert get_new_password() == 'testtest1'
     browser.close()
 
 # def test_5(fox_driver_wont_close):
