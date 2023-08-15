@@ -49,7 +49,10 @@ def access_token():
 
 @pytest.fixture(scope='session')
 def browser_autorized_mozila():
-    browser_autorized_mozila = webdriver.Firefox()
+    op = webdriver.FirefoxOptions()
+    op.add_argument('--headless')
+    browser_autorized_mozila = webdriver.Firefox(options=op)
+    # browser_autorized_mozila = webdriver.Firefox()
     browser_autorized_mozila.implicitly_wait(10)
     browser_autorized_mozila.get('https://strojregionfilomena.workhere.ru/clients')
     user = browser_autorized_mozila.find_element(By.ID, "auth-form-login_user")

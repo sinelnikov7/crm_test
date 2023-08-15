@@ -2,6 +2,8 @@ import time
 import imaplib
 import email
 
+import allure
+import pytest
 import requests
 import datetime
 
@@ -67,88 +69,148 @@ def get_new_password():
                 return 'Письмо не пришло'
 
 # def test_auth_with_invalid_data(chrome_driver_will_close, fox_driver_will_close):
+# @pytest.mark.parametrize(
+#     'login, password',
+#     [
+#         ('admins', 'testtest1'),
+#         ('admin', 'testtest'),
+#         ('admins', 'testtest'),
+#     ]
+#     )
+# def test_auth_with_invalid_data(fox_driver_will_close, login, password):
+# blocker/critical/normal/minor/trivial
+
+# @allure.feature('Авторизация')
+# @allure.story('Авторизация с невалидными данными')
+# @allure.severity('normal')
 # def test_auth_with_invalid_data(fox_driver_will_close):
 #     """Авторизация с невалидными данными"""
 #     # browsers = [chrome_driver_will_close, fox_driver_will_close]
 #     browsers = [fox_driver_will_close]
+#     # data = [
+#     #     {'login': login, 'password': password},
+#     # ]
 #     data = [
-#         {'login': 'admins', 'password': 'testtest1'},
-#         {'login': 'admin', 'password': 'testtest'},
-#         {'login': 'admins', 'password': 'testtest'}
+#         {'login': 'admins', 'password': 'testtest1', 'description': 'Невалидный логин'},
+#         {'login': 'admin', 'password': 'testtest', 'description': 'Невалидный пароль'},
+#         {'login': 'admins', 'password': 'testtest', 'description': 'Невалидный логин и пароль'}
 #     ]
 #     for browser in browsers:
 #         browser.implicitly_wait(5)
 #         browser.get('https://strojregionfilomena.workhere.ru/')
-#         user = browser.find_element(By.ID, "auth-form-login_user")
-#         password = browser.find_element(By.ID, 'auth-form-login_password')
-#         login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+#         with allure.step('Наличие поля "Логин"'):
+#             user = browser.find_element(By.ID, "auth-form-login_user")
+#         with allure.step('Наличие поля "Пароль"'):
+#             password = browser.find_element(By.ID, 'auth-form-login_password')
+#         with allure.step('Наличие кнопки "Войти"'):
+#             login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
 #         for value in data:
-#             user.send_keys(value.get('login'))
-#             password.send_keys(value.get('password'))
-#             try:
-#                 WebDriverWait(browser, 5).until(EC.element_to_be_clickable(login_button))
-#                 login_button.click()
-#             except:
-#                 print('something wrong "login_button.click()"')
-#             message = browser.find_element(By.CSS_SELECTOR, '.auth-forms-content-fields-message__hIBT7')
-#             assert message.text == 'Неверное имя пользователя или пароль.'
+#             with allure.step('Заполнение поля "Логин"'):
+#                 user.send_keys(value.get('login'))
+#             with allure.step('Заполнение поля "Пароль"'):
+#                 password.send_keys(value.get('password'))
+#             with allure.step(f'Авторизация с {value.get("description")}'):
+#                 try:
+#                     WebDriverWait(browser, 5).until(EC.element_to_be_clickable(login_button))
+#                     login_button.click()
+#                     #time.sleep(5)
+#                     message = browser.find_element(By.CSS_SELECTOR, '.auth-forms-content-fields-message__hIBT7').text
+#                 except:
+#                     print('something wrong "login_button.click()"')
+#                     message = 'Элемент подсказки не найден'
+#             assert message == 'Неверное имя пользователя или пароль.'
 #             user.send_keys(Keys.CONTROL + "a")
 #             user.send_keys(Keys.DELETE)
 #             password.send_keys(Keys.CONTROL + "a")
 #             password.send_keys(Keys.DELETE)
 #     # chrome_driver_will_close.close()
-#     fox_driver_will_close.close()
-#
+#         fox_driver_will_close.close()
+
+
+# @allure.feature('Авторизация')
+# @allure.story('Авторизация по логину с валидными данными')
+# @allure.severity('blocker')
 # def test_auth_with_login(fox_driver_will_close):
 #     """Авторизация по логину"""
 #     browsers = [fox_driver_will_close]
 #     for browser in browsers:
 #         browser.implicitly_wait(5)
 #         browser.get('https://strojregionfilomena.workhere.ru/')
-#         user = browser.find_element(By.ID, "auth-form-login_user")
-#         password = browser.find_element(By.ID, 'auth-form-login_password')
-#         login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
-#         user.send_keys('admin')
-#         password.send_keys('testtest1')
-#         login_button.click()
-#         time.sleep(2)
-#         message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
-#         assert message.text == 'Вы успешно вошли'
+#         with allure.step('Наличие поля "Логин"'):
+#             user = browser.find_element(By.ID, "auth-form-login_user")
+#         with allure.step('Наличие поля "Пароль"'):
+#             password = browser.find_element(By.ID, 'auth-form-login_password')
+#         with allure.step('Наличие кнопки "Войти"'):
+#             login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+#         with allure.step('Заполнение поля "Логин"'):
+#             user.send_keys('admin')
+#         with allure.step('Заполнение поля "Пароль"'):
+#             password.send_keys('testtest1')
+#         with allure.step('Нажать на кнопку войти'):
+#             login_button.click()
+#             time.sleep(2)
+#             message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
+#             assert message.text == 'Вы успешно вошли'
 #         browser.close()
-#
+
+
+# @allure.feature('Авторизация')
+# @allure.story('Авторизация по телефону с валидными данными')
+# @allure.severity('blocker')
 # def test_auth_with_phone(fox_driver_will_close):
 #     """Авторизация по номеру телефона"""
 #     browsers = [fox_driver_will_close]
 #     for browser in browsers:
 #         browser.implicitly_wait(5)
 #         browser.get('https://strojregionfilomena.workhere.ru/')
-#         user = browser.find_element(By.ID, "auth-form-login_user")
-#         password = browser.find_element(By.ID, 'auth-form-login_password')
-#         login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
-#         user.send_keys('74956468444')
-#         password.send_keys('testtest1')
-#         login_button.click()
-#         time.sleep(2)
-#         message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
-#         assert message.text == 'Вы успешно вошли'
+#         with allure.step('Наличие поля "Логин"'):
+#             user = browser.find_element(By.ID, "auth-form-login_user")
+#         with allure.step('Наличие поля "Пароль"'):
+#             password = browser.find_element(By.ID, 'auth-form-login_password')
+#         with allure.step('Наличие кнопки "Войти"'):
+#             login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+#         with allure.step('Заполнение поля "Логин"'):
+#             user.send_keys('375336388537')
+#         with allure.step('Заполнение поля "Пароль"'):
+#             password.send_keys('testtest1')
+#         with allure.step('Нажать на кнопку войти'):
+#             login_button.click()
+#             time.sleep(2)
+#             try:
+#                 message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div').text
+#             except NoSuchElementException:
+#                 message = 'Авторизация не произошла'
+#             assert message == 'Вы успешно вошли'
 #         browser.close()
-#
-# def test_auth_with_email(fox_driver_will_close):
-#     """Авторизация по email"""
-#     browsers = [fox_driver_will_close]
-#     for browser in browsers:
-#         browser.implicitly_wait(5)
-#         browser.get('https://strojregionfilomena.workhere.ru/')
-#         user = browser.find_element(By.ID, "auth-form-login_user")
-#         password = browser.find_element(By.ID, 'auth-form-login_password')
-#         login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
-#         user.send_keys('vouka8@yandex.by')
-#         password.send_keys('testtest1')
-#         login_button.click()
-#         time.sleep(2)
-#         message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div')
-#         assert message.text == 'Вы успешно вошли'
-#         browser.close()
+
+@allure.feature('Авторизация')
+@allure.story('Авторизация по почте с валидными данными')
+@allure.severity('blocker')
+def test_auth_with_email(fox_driver_will_close):
+    """Авторизация по email"""
+    browsers = [fox_driver_will_close]
+    for browser in browsers:
+        browser.implicitly_wait(5)
+        browser.get('https://strojregionfilomena.workhere.ru/')
+        with allure.step('Наличие поля "Логин"'):
+            user = browser.find_element(By.ID, "auth-form-login_user")
+        with allure.step('Наличие поля "Пароль"'):
+            password = browser.find_element(By.ID, 'auth-form-login_password')
+        with allure.step('Наличие кнопки "Войти"'):
+            login_button = browser.find_element(By.CSS_SELECTOR, '.ant-btn-block')
+        with allure.step('Заполнение поля "Логин"'):
+            user.send_keys('vouka8@yandex.by')
+        with allure.step('Заполнение поля "Пароль"'):
+            password.send_keys('testtest1')
+        with allure.step('Нажать на кнопку войти'):
+            login_button.click()
+            time.sleep(2)
+            try:
+                message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div').text
+            except NoSuchElementException:
+                message = 'Авторизация не произошла'
+            assert message == 'Вы успешно вошли'
+        browser.close()
 #
 #
 # def test_recover_password_with_login(fox_driver_will_close):
@@ -281,33 +343,71 @@ def get_new_password():
     # browser.close()
 
 #NoSuchElementException
-def test_check_value_vidget_clients(browser_autorized_mozila):
-    """Проверка значений статистики клиентов в виджете и на вкладке"""
-    browser = browser_autorized_mozila
-    wait = WebDriverWait(browser, 10)
-    browser.implicitly_wait(10)
-    browser.get('https://strojregionfilomena.workhere.ru/')
-    browser.execute_script("window.open('');")
-    browser.switch_to.window(browser.window_handles[1])
-    browser.get('https://strojregionfilomena.workhere.ru/clients')
-    radio_group = browser.find_element(By.XPATH, '//div[@class="ant-radio-group ant-radio-group-outline"]/label[1]')
-    radio_group.click()
-    time.sleep(5)
-    client_status = browser.find_element(By.XPATH, '//div[@id="rc-tabs-0-tab-1"]')
-    client_status.click()
-    assert browser.find_element(By.XPATH, '//div[@class="quick-stats__block__2eDvm"]').is_displayed() == True
-    index = 1
-    status_list = '//div[@class="quick-stats__block__2eDvm"]'
-    dict_from_vkladka = {'name': [], 'value': [], 'procent': []}
-    while True:
-        try:
-            dict_from_vkladka['name'].append(browser.find_element(By.XPATH, f'{status_list}/div[{index}]/div/div').text)
-            dict_from_vkladka['value'].append(browser.find_element(By.XPATH, f'{status_list}/div[{index}]/span/div').text)
-            dict_from_vkladka['procent'].append(browser.find_element(By.XPATH, f'{status_list}/div[{index}]/div[2]/div/span').text)
-            index += 1
-        except NoSuchElementException:
-            print(dict_from_vkladka)
-            break
+# def test_check_value_vidget_clients(browser_autorized_mozila):
+#     """Проверка значений статистики клиентов в виджете и на вкладке"""
+#     browser = browser_autorized_mozila
+#     wait = WebDriverWait(browser, 10)
+#     browser.get('https://strojregionfilomena.workhere.ru/')
+#     browser.execute_script("window.open('');")
+#     browser.switch_to.window(browser.window_handles[1])
+#     browser.get('https://strojregionfilomena.workhere.ru/clients')
+#     for time_stamp in range(1, 5):
+#         dict_from_vkladka = {'name': [], 'value': [], 'procent': []}
+#         dict_from_vidget = {'name': [], 'value': [], 'procent': []}
+#         for tab in range(0, 2):
+#             browser.switch_to.window(browser.window_handles[tab])
+#             time_group = wait.until(EC.element_to_be_clickable((By.XPATH, f'//div[@class="ant-radio-group ant-radio-group-outline"]/label[{time_stamp}]')))
+#             time_group.click()
+#             wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@class="quick-stats__block__2eDvm"]/div[1]')))
+#             time.sleep(3)
+#             index = 1
+#             if tab == 0:
+#                 while True:
+#                     try:
+#                         dict_from_vidget['name'].append(browser.find_element(By.XPATH,f'//div[@class="quick-stats__block__2eDvm"]/div[{index}]/div/div').text)
+#                         dict_from_vidget['value'].append(browser.find_element(By.XPATH, f'//div[@class="quick-stats__block__2eDvm"]/div[{index}]/span/div').text)
+#                         dict_from_vidget['procent'].append(browser.find_element(By.XPATH,f'//div[@class="quick-stats__block__2eDvm"]/div[{index}]/div[2]/div/span').text)
+#                         index += 1
+#                     except NoSuchElementException:
+#                         break
+#             else:
+#                 while True:
+#                     try:
+#                         dict_from_vkladka['name'].append(browser.find_element(By.XPATH, f'//div[@class="quick-stats__block__2eDvm"]/div[{index}]/div/div').text)
+#                         dict_from_vkladka['value'].append(browser.find_element(By.XPATH, f'//div[@class="quick-stats__block__2eDvm"]/div[{index}]/span/div').text)
+#                         dict_from_vkladka['procent'].append(browser.find_element(By.XPATH, f'//div[@class="quick-stats__block__2eDvm"]/div[{index}]/div[2]/div/span').text)
+#                         index += 1
+#                     except NoSuchElementException:
+#                         break
+#         assert dict_from_vidget == dict_from_vkladka
+        #print('\n', f'iter={time_stamp}', '\n',  dict_from_vidget, '\n', dict_from_vkladka, '\n', '----------------------------------------------')
+
+
+
+
+
+
+        # browser.switch_to.window(browser.window_handles[0])
+        # data_filter_vidget = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@class="ant-radio-group ant-radio-group-outline"]')))
+        # radio_group = data_filter_vidget.find_element(By.XPATH, f'./label[{i}]')
+        # radio_group.click()
+        # time.sleep(2)
+        # status_list_vidget = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@class="quick-stats__block__2eDvm"]')))
+        # index = 1
+        # dict_from_vidget = {'name': [], 'value': [], 'procent': []}
+        # while True:
+        #     try:
+        #         dict_from_vidget['name'].append(
+        #             status_list_vidget.find_element(By.XPATH, f'./div[{index}]/div/div').text)
+        #         dict_from_vidget['value'].append(
+        #             status_list_vidget.find_element(By.XPATH, f'./div[{index}]/span/div').text)
+        #         dict_from_vidget['procent'].append(
+        #             status_list_vidget.find_element(By.XPATH, f'./div[{index}]/div[2]/div/span').text)
+        #         index += 1
+        #     except NoSuchElementException:
+        #         break
+        # print('\n', f'iter_vidget={i}', dict_from_vidget, '\n')
+
 
 
 

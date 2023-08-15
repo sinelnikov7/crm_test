@@ -23,3 +23,5 @@ data = {"user": "admin", "password": "testtest1"}
 response = requests.post('https://strojregionfilomena.workhere.ru/api/auth/login', data=data).json()
 print(response['data']['token'])
 
+for i in range(1,5):
+    print(i)
