@@ -40,7 +40,7 @@ def fox_driver_will_close():
     fox_driver_will_close = webdriver.Firefox()
     return fox_driver_will_close
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def access_token():
     data = {"user": "admin", "password": "testtest1"}
     response = requests.post('https://strojregionfilomena.workhere.ru/api/auth/login', data=data).json()
@@ -51,8 +51,8 @@ def access_token():
 def browser_autorized_mozila():
     op = webdriver.FirefoxOptions()
     op.add_argument('--headless')
-    browser_autorized_mozila = webdriver.Firefox(options=op)
-    # browser_autorized_mozila = webdriver.Firefox()
+    # browser_autorized_mozila = webdriver.Firefox(options=op)
+    browser_autorized_mozila = webdriver.Firefox()
     browser_autorized_mozila.implicitly_wait(10)
     browser_autorized_mozila.get('https://strojregionfilomena.workhere.ru/clients')
     user = browser_autorized_mozila.find_element(By.ID, "auth-form-login_user")

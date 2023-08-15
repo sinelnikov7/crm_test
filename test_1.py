@@ -246,50 +246,38 @@ def get_new_password():
 #         button_aprove.click()
 #     browser.close()
 #
-@allure.feature('Восстановление пароля')
-@allure.story('Авторизация с новым паролем, и установка стандартного пароля')
-@allure.severity('Critical')
-def test_auth_with_new_login(fox_driver_will_close):
-    """Авторизация с новым паролем, и установка стандартного пароля"""
-    browser = fox_driver_will_close
-    browser.implicitly_wait(5)
-    browser.get('https://strojregionfilomena.workhere.ru/')
-    with allure.step('Наличие поля "Логин" и его заполнение'):
-        browser.find_element(By.ID, "auth-form-login_user").send_keys('admin')
-    with allure.step('Получение пароля из почты и его ввод в инпут'):
-        password_get = get_new_password()
-        browser.find_element(By.ID, 'auth-form-login_password').send_keys(password_get)
-    with allure.step('Наличие и нажатие кнопки войти'):
-        browser.find_element(By.CSS_SELECTOR, '.ant-btn-block').click()
-    time.sleep(2)
-    with allure.step('Подтверждение Авторизации со сгенерированным паролем'):
-        try:
-            message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div').text
-        except NoSuchElementException:
-            message = "Авторизация не прошла"
-        assert message == 'Вы успешно вошли'
-    url = 'https://strojregionfilomena.workhere.ru/api/auth/login?_suppress_response_codes=1&expand=partner.partnerHhConfig'
-    data = {"user":"admin", "password": password_get}
-    # data = {"user":"admin", "password": 'testtest1'}
-    response = requests.post(url, data=data).json()
-    access = response['data']['token']
-    url_change_password = f'https://api.macroncrm.ru/user/update?id=2&expand=imageLink%2CimageThumbnailLink%2CassignedRights%2Crequisite%2CsignatureObject%2CpassportObjects%2CisWorkObserver%2CimageCropThumbnailLink%2CisGeneralObserver&access-token={access}'
-    with allure.step('Установка нового пароля и его отправка на почту'):
-        requests.post(url_change_password, data={"macron_web_pass": "testtest1"}).json()
-        assert get_new_password() == 'testtest1'
-    browser.close()
-
-# def test_5(fox_driver_wont_close):
-#     fox_driver_wont_close.get('https://strojregionfilomena.workhere.ru/')
-#     fox_driver_wont_close.implicitly_wait(10)
-#     user = fox_driver_wont_close.find_element(By.ID, "auth-form-login_user")
-#     password = fox_driver_wont_close.find_element(By.ID, 'auth-form-login_password')
-#     login_button = fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.ant-btn-block')
-#     user.send_keys('admin')
-#     password.send_keys('testtest1')
-#     login_button.click()
-#     dropdown = fox_driver_wont_close.find_element(By.CSS_SELECTOR, '.user-dropdown__lNpwN')
-#     assert dropdown.is_displayed()
+# @allure.feature('Восстановление пароля')
+# @allure.story('Авторизация с новым паролем, и установка стандартного пароля')
+# @allure.severity('Critical')
+# def test_auth_with_new_login(fox_driver_will_close):
+#     """Авторизация с новым паролем, и установка стандартного пароля"""
+#     browser = fox_driver_will_close
+#     browser.implicitly_wait(5)
+#     browser.get('https://strojregionfilomena.workhere.ru/')
+#     with allure.step('Наличие поля "Логин" и его заполнение'):
+#         browser.find_element(By.ID, "auth-form-login_user").send_keys('admin')
+#     with allure.step('Получение пароля из почты и его ввод в инпут'):
+#         password_get = get_new_password()
+#         browser.find_element(By.ID, 'auth-form-login_password').send_keys(password_get)
+#     with allure.step('Наличие и нажатие кнопки войти'):
+#         browser.find_element(By.CSS_SELECTOR, '.ant-btn-block').click()
+#     time.sleep(2)
+#     with allure.step('Подтверждение Авторизации со сгенерированным паролем'):
+#         try:
+#             message = browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div[2]/div').text
+#         except NoSuchElementException:
+#             message = "Авторизация не прошла"
+#         assert message == 'Вы успешно вошли'
+#     url = 'https://strojregionfilomena.workhere.ru/api/auth/login?_suppress_response_codes=1&expand=partner.partnerHhConfig'
+#     data = {"user":"admin", "password": password_get}
+#     # data = {"user":"admin", "password": 'testtest1'}
+#     response = requests.post(url, data=data).json()
+#     access = response['data']['token']
+#     url_change_password = f'https://api.macroncrm.ru/user/update?id=2&expand=imageLink%2CimageThumbnailLink%2CassignedRights%2Crequisite%2CsignatureObject%2CpassportObjects%2CisWorkObserver%2CimageCropThumbnailLink%2CisGeneralObserver&access-token={access}'
+#     with allure.step('Установка нового пароля и его отправка на почту'):
+#         requests.post(url_change_password, data={"macron_web_pass": "testtest1"}).json()
+#         assert get_new_password() == 'testtest1'
+#     browser.close()
 
 
 # def test_tools(fox_driver_wont_close):
@@ -328,31 +316,33 @@ def test_auth_with_new_login(fox_driver_will_close):
 #     validate_key = a.get_attribute('value')
 #     assert key == validate_key
 
-
-# def test_create_clients(fox_driver_wont_close, access_token):
-#     """Создание и редактирование клиента"""
-#     browser = fox_driver_wont_close
-#     wait = WebDriverWait(browser, 10)
-#     browser.implicitly_wait(10)
-#     browser.get('https://strojregionfilomena.workhere.ru/clients')
-#     # create_button = browser.find_element(By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')
-#     create_button = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')))
-#     create_button.click()
-#     input_client_name = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="CreateLeadForm_ex_name"]')))
-#     input_client_name.send_keys(f'{datetime.date.today()} - 0')
-#     button_save_client = browser.find_element(By.XPATH, '//button[@type="submit"]')
-#     button_save_client.click()
-#     statuses = ([6, 2], [4, 4], [3, 5])
-#     for status in statuses:
-#         print(access_token)
-#         data_now = datetime.datetime.now()
-#         name = f"{data_now.day}-{data_now.month}-{data_now.year} {data_now.hour}:{data_now.minute}:{data_now.second}"
-#         url = f'https://api.macroncrm.ru/express-client/create?disable_black_list_check=1&access-token={access_token}'
-#         data = {
-#             "client_stts": status[0], "contr_stts": status[1], "ex_name": name, "deal_availability": 0,
-#             "name_creator": "Admin", "respon_client_stts": "Admin", "uid_creator": 2
-#         }
-#         assert requests.post(url, data=data).status_code == 201
+@allure.feature('Клиенты')
+@allure.story('Создание клиентов')
+@allure.severity('Critical')
+def test_create_clients(browser_autorized_mozila, access_token):
+    """Создание клиентов"""
+    browser = browser_autorized_mozila
+    wait = WebDriverWait(browser, 10)
+    browser.implicitly_wait(10)
+    browser.get('https://strojregionfilomena.workhere.ru/clients')
+    # create_button = browser.find_element(By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')
+    create_button = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')))
+    create_button.click()
+    input_client_name = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="CreateLeadForm_ex_name"]')))
+    input_client_name.send_keys(f'{datetime.date.today()} - 0')
+    button_save_client = browser.find_element(By.XPATH, '//button[@type="submit"]')
+    button_save_client.click()
+    statuses = ([6, 2], [4, 4], [3, 5])
+    for status in statuses:
+        print(access_token)
+        data_now = datetime.datetime.now()
+        name = f"{data_now.day}-{data_now.month}-{data_now.year} {data_now.hour}:{data_now.minute}:{data_now.second}"
+        url = f'https://api.macroncrm.ru/express-client/create?disable_black_list_check=1&access-token={access_token}'
+        data = {
+            "client_stts": status[0], "contr_stts": status[1], "ex_name": name, "deal_availability": 0,
+            "name_creator": "Admin", "respon_client_stts": "Admin", "uid_creator": 2
+        }
+        assert requests.post(url, data=data).status_code == 201
     # browser.close()
 
 #NoSuchElementException
