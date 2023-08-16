@@ -4,18 +4,15 @@ import time
 
 
 def get_key():
+    """Получение кода подтверждения при восстановлении пароля из почты"""
     trying = 0
     while True:
         mail = imaplib.IMAP4_SSL('imap.yandex.ru', 993)
         mail.login('vouka8@yandex.by', 'xmlfafkxvimeijkx')
         mail.list()
         mail.select('inbox')
-        # result, data = mail.search(None, "ALL")
         result, data = mail.search(None, 'UNSEEN')
         ids = data[0]
-        print(ids)
-        print(len(ids))
-        print(trying)
         if len(ids) > 0:
             id_list = ids.split()
             latest_email_id = id_list[-1]
@@ -33,20 +30,16 @@ def get_key():
             if  trying > 10:
                 return 'Письмо не пришло'
 
-
 def get_new_password():
+    """Получение нового пароля из почты"""
     trying = 0
     while True:
         mail = imaplib.IMAP4_SSL('imap.yandex.ru', 993)
         mail.login('vouka8@yandex.by', 'xmlfafkxvimeijkx')
         mail.list()
         mail.select('inbox')
-        # result, data = mail.search(None, "ALL")
         result, data = mail.search(None, 'UNSEEN')
         ids = data[0]
-        # print(ids)
-        # print(len(ids))
-        # print(trying)
         if len(ids) > 0:
             id_list = ids.split()
             latest_email_id = id_list[-1]
@@ -57,7 +50,6 @@ def get_new_password():
             message = email_message.get_payload()[0].get_payload(decode=True).decode('utf-8')
             splited = message.split('Пароль: ')[1]
             password = splited[0:9]
-            print(email_message['Date'])
             return password
         else:
             time.sleep(1)
@@ -65,5 +57,5 @@ def get_new_password():
             if  trying > 10:
                 return 'Письмо не пришло'
 
-print(get_new_password())
-print(get_key())
+# print(get_new_password())
+# print(get_key())
