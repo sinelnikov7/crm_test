@@ -1,9 +1,5 @@
 import time
-import imaplib
-import email
-
 import allure
-import pytest
 import requests
 import datetime
 
@@ -14,82 +10,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from mail import get_key, get_new_password
 
-# def get_key():
-#     """Получение кода подтверждения при восстановлении пароля из почты"""
-#     trying = 0
-#     while True:
-#         mail = imaplib.IMAP4_SSL('imap.yandex.ru', 993)
-#         mail.login('vouka8@yandex.by', 'xmlfafkxvimeijkx')
-#         mail.list()
-#         mail.select('inbox')
-#         result, data = mail.search(None, 'UNSEEN')
-#         ids = data[0]
-#         if len(ids) > 0:
-#             id_list = ids.split()
-#             latest_email_id = id_list[-1]
-#             result, data = mail.fetch(latest_email_id, "(RFC822)")
-#             raw_email = data[0][1]
-#             raw_email_string = raw_email.decode('utf-8')
-#             email_message = email.message_from_string(raw_email_string)
-#             message = email_message.get_payload()[0].get_payload(decode=True).decode('utf-8')
-#             key = message[-6:]
-#             print(email_message['Date'])
-#             return key
-#         else:
-#             time.sleep(1)
-#             trying += 1
-#             if  trying > 10:
-#                 return 'Письмо не пришло'
-#
-# def get_new_password():
-#     """Получение нового пароля из почты"""
-#     trying = 0
-#     while True:
-#         mail = imaplib.IMAP4_SSL('imap.yandex.ru', 993)
-#         mail.login('vouka8@yandex.by', 'xmlfafkxvimeijkx')
-#         mail.list()
-#         mail.select('inbox')
-#         result, data = mail.search(None, 'UNSEEN')
-#         ids = data[0]
-#         if len(ids) > 0:
-#             id_list = ids.split()
-#             latest_email_id = id_list[-1]
-#             result, data = mail.fetch(latest_email_id, "(RFC822)")
-#             raw_email = data[0][1]
-#             raw_email_string = raw_email.decode('utf-8')
-#             email_message = email.message_from_string(raw_email_string)
-#             message = email_message.get_payload()[0].get_payload(decode=True).decode('utf-8')
-#             splited = message.split('Пароль: ')[1]
-#             password = splited[0:9]
-#             return password
-#         else:
-#             time.sleep(1)
-#             trying += 1
-#             if  trying > 10:
-#                 return 'Письмо не пришло'
-
-# def test_auth_with_invalid_data(chrome_driver_will_close, fox_driver_will_close):
-# @pytest.mark.parametrize(
-#     'login, password',
-#     [
-#         ('admins', 'testtest1'),
-#         ('admin', 'testtest'),
-#         ('admins', 'testtest'),
-#     ]
-#     )
-# def test_auth_with_invalid_data(fox_driver_will_close, login, password):
-# blocker/critical/normal/minor/trivial
 
 @allure.feature('Авторизация')
 @allure.story('Авторизация с невалидными данными')
 @allure.severity('Normal')
 def test_auth_with_invalid_data(fox_driver_will_close):
     """Авторизация с невалидными данными"""
-    # browsers = [chrome_driver_will_close, fox_driver_will_close]
     browsers = [fox_driver_will_close]
-    # data = [
-    #     {'login': login, 'password': password},
-    # ]
     data = [
         {'login': 'admins', 'password': 'testtest1', 'description': 'Невалидный логин'},
         {'login': 'admin', 'password': 'testtest', 'description': 'Невалидный пароль'},
@@ -123,7 +50,6 @@ def test_auth_with_invalid_data(fox_driver_will_close):
             user.send_keys(Keys.DELETE)
             password.send_keys(Keys.CONTROL + "a")
             password.send_keys(Keys.DELETE)
-    # chrome_driver_will_close.close()
         fox_driver_will_close.close()
 #
 #
@@ -249,9 +175,9 @@ def test_recover_password_with_login(fox_driver_will_close):
 @allure.feature('Восстановление пароля')
 @allure.story('Авторизация с новым паролем, и установка стандартного пароля')
 @allure.severity('Critical')
-def test_auth_with_new_login(fox_driver_will_close):
+def test_auth_with_new_login(fox_driver_wont_close):
     """Авторизация с новым паролем, и установка стандартного пароля"""
-    browser = fox_driver_will_close
+    browser = fox_driver_wont_close
     browser.implicitly_wait(5)
     browser.get('https://strojregionfilomena.workhere.ru/')
     with allure.step('Наличие поля "Логин" и его заполнение'):
@@ -270,26 +196,24 @@ def test_auth_with_new_login(fox_driver_will_close):
         assert message == 'Вы успешно вошли'
     url = 'https://strojregionfilomena.workhere.ru/api/auth/login?_suppress_response_codes=1&expand=partner.partnerHhConfig'
     data = {"user":"admin", "password": password_get}
-    # data = {"user":"admin", "password": 'testtest1'}
     response = requests.post(url, data=data).json()
     access = response['data']['token']
     url_change_password = f'https://api.macroncrm.ru/user/update?id=2&expand=imageLink%2CimageThumbnailLink%2CassignedRights%2Crequisite%2CsignatureObject%2CpassportObjects%2CisWorkObserver%2CimageCropThumbnailLink%2CisGeneralObserver&access-token={access}'
     with allure.step('Установка нового пароля и его отправка на почту'):
         requests.post(url_change_password, data={"macron_web_pass": "testtest1"}).json()
         assert get_new_password() == 'testtest1'
-    browser.close()
+    # browser.close()
 #
 
 @allure.feature('Клиенты')
 @allure.story('Создание клиентов')
 @allure.severity('Critical')
-def test_create_clients(browser_autorized_mozila, access_token):
+def test_create_clients(fox_driver_wont_close, access_token):
     """Создание клиентов"""
-    browser = browser_autorized_mozila
+    browser = fox_driver_wont_close
     wait = WebDriverWait(browser, 10)
     browser.implicitly_wait(10)
     browser.get('https://strojregionfilomena.workhere.ru/clients')
-    # create_button = browser.find_element(By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')
     create_button = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.addButtonWrapper__FmKJO')))
     create_button.click()
     input_client_name = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="CreateLeadForm_ex_name"]')))
@@ -307,15 +231,13 @@ def test_create_clients(browser_autorized_mozila, access_token):
             "name_creator": "Admin", "respon_client_stts": "Admin", "uid_creator": 2
         }
         assert requests.post(url, data=data).status_code == 201
-    #browser.close()
 
-#NoSuchElementException
 @allure.feature('Клиенты')
 @allure.story('Совпадение статистики статуса активности на вкладке клиенты и в виджете')
 @allure.severity('Normal')
-def test_check_value_vidget_clients(browser_autorized_mozila):
+def test_check_value_vidget_clients(fox_driver_wont_close):
     """Проверка значений статистики клиентов в виджете и на вкладке"""
-    browser = browser_autorized_mozila
+    browser = fox_driver_wont_close
     wait = WebDriverWait(browser, 10)
     browser.get('https://strojregionfilomena.workhere.ru/')
     browser.execute_script("window.open('');")

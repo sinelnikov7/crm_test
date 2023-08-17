@@ -40,6 +40,15 @@ def fox_driver_will_close():
     fox_driver_will_close = webdriver.Firefox()
     return fox_driver_will_close
 
+
+@pytest.fixture(scope='session')
+def fox_driver_wont_close():
+    # op = webdriver.FirefoxOptions()
+    # op.add_argument('--headless')
+    # fos_driver_will_close = webdriver.Firefox(options=op)
+    fox_driver_wont_close = webdriver.Firefox()
+    return fox_driver_wont_close
+
 @pytest.fixture(scope='session')
 def access_token():
     data = {"user": "admin", "password": "testtest1"}
@@ -63,6 +72,3 @@ def browser_autorized_mozila():
     login_button.click()
     time.sleep(5)
     return browser_autorized_mozila
-
-
-# print(get_key())
