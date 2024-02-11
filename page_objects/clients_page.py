@@ -1,6 +1,7 @@
 from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver
 from selenium.webdriver.common.by import By
 
+
 class ClientsPage:
 
     def __init__(self, driver: RemoteWebDriver):

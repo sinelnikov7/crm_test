@@ -1,5 +1,3 @@
-from crm_test.services.driver import FoxDriver
-import selenium.webdriver as WebDriver
 from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver
 from selenium.webdriver.common.by import By
 
