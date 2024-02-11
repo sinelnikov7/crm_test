@@ -8,3 +8,6 @@ __pycache__/
 /.pytest_cache/
 /allureress/
 /results/
+/tests/geckodriver.log
+/page_objects/other.py
+/services/waits.py
